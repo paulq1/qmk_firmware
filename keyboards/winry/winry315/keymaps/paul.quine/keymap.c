@@ -5,14 +5,15 @@ bool encoder_volume(bool clockwise);
 const char* pq_temp(void);
 
 enum my_keycodes {
-    SS_HELLO = SAFE_RANGE
+    SS_HELLO = SAFE_RANGE,
+    SS_TEMP1
 };
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT_top(
             KC_NO,      KC_MUTE,     KC_MPLY,
-        LCTL(LALT(KC_DEL)),    SS_HELLO,    KC_NO,    KC_NO,    KC_NO,
+        LCTL(LALT(KC_DEL)),    SS_HELLO,    SS_TEMP1,    KC_NO,    KC_NO,
         KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,
         MO(1),    KC_NO,    KC_NO,    KC_NO,    KC_NO
     ),
@@ -53,6 +54,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case SS_HELLO:
             if (record->event.pressed) {
                 send_string(pq_temp());
+            }
+            return false;
+        case SS_TEMP1:
+            if (record->event.pressed) {
+                send_string("other string");
             }
             return false;
     }
