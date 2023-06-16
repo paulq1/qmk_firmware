@@ -2,6 +2,7 @@
 #include "pq_color.h"
 
 bool encoder_volume(bool clockwise);
+const char* pq_temp(void);
 
 enum my_keycodes {
     SS_HELLO = SAFE_RANGE
@@ -25,6 +26,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 // clang-format on
 
+const char* pq_temp(void){
+    return "Hello, world!\n";
+}
+
 bool encoder_volume(bool clockwise) {
     if (clockwise) {
         tap_code(KC_VOLU);
@@ -47,7 +52,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case SS_HELLO:
             if (record->event.pressed) {
-                SEND_STRING("Hello, world!\n");
+                send_string(pq_temp());
             }
             return false;
     }
