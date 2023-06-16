@@ -59,7 +59,7 @@ void suspend_wakeup_init_kb(void) {
 }
 
 #ifdef RGB_MATRIX_ENABLE
-    void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max){
+    bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max){
         for (uint8_t i=0; i<ARRAYSIZE(LED_ALL); i++) {
             rgb_matrix_set_color(LED_ALL[i], PQ_WHITE);
         }
@@ -92,11 +92,12 @@ void suspend_wakeup_init_kb(void) {
                 break;
         }
 
-        if (IS_HOST_LED_ON(USB_LED_CAPS_LOCK)) {
+        if (host_keyboard_led_state().caps_lock) {
             for (uint8_t i=0; i<ARRAYSIZE(LED_SIDE_LEFT); i++) {
                 rgb_matrix_set_color(LED_SIDE_LEFT[i], PQ_RED);
             }
             rgb_matrix_set_color(LED_CAPS, PQ_RED);
         }
+        return false;
     }
 #endif
