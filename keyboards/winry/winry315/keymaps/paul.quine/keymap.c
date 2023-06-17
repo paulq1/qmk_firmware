@@ -1,19 +1,21 @@
 #include QMK_KEYBOARD_H
 #include "pq_color.h"
+#include "pq_strings.h"
 
 bool encoder_volume(bool clockwise);
-const char* pq_temp(void);
+bool encoder_back_forward(bool clockwise);
+bool encoder_up_down(bool clockwise);
 
 enum my_keycodes {
-    SS_HELLO = SAFE_RANGE,
-    SS_TEMP1
+    SS_CUSTOM_STRING_1 = SAFE_RANGE,
+    SS_CUSTOM_STRING_2
 };
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT_top(
-            KC_NO,      KC_MUTE,     KC_MPLY,
-        LCTL(LALT(KC_DEL)),    SS_HELLO,    SS_TEMP1,    KC_NO,    KC_NO,
+            KC_NO,      KC_MUTE,     KC_NO,
+        LCTL(LALT(KC_DEL)),    SS_CUSTOM_STRING_1,    SS_CUSTOM_STRING_2,    KC_NO,    KC_NO,
         KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,
         MO(1),    KC_NO,    KC_NO,    KC_NO,    KC_NO
     ),
@@ -27,10 +29,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 // clang-format on
 
-const char* pq_temp(void){
-    return "Hello, world!\n";
-}
-
 bool encoder_volume(bool clockwise) {
     if (clockwise) {
         tap_code(KC_VOLU);
@@ -40,10 +38,34 @@ bool encoder_volume(bool clockwise) {
     return true;
 }
 
+bool encoder_back_forward(bool clockwise) {
+    if (clockwise) {
+        tap_code(KC_RGHT);
+    } else {
+        tap_code(KC_LEFT);
+    }
+    return true;
+}
+
+bool encoder_up_down(bool clockwise) {
+    if (clockwise) {
+        tap_code(KC_PGDN);
+    } else {
+        tap_code(KC_PGUP);
+    }
+    return true;
+}
+
 bool encoder_update_user(uint8_t index, bool clockwise) {
     switch (index) {
+        case 0:
+            encoder_back_forward(clockwise);
+            break ;
         case 1:
             encoder_volume(clockwise);
+            break;
+        case 2:
+            encoder_up_down(clockwise);
             break;
     }
     return false;
@@ -51,14 +73,14 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case SS_HELLO:
+        case SS_CUSTOM_STRING_1:
             if (record->event.pressed) {
-                send_string(pq_temp());
+                send_string(pq_custom_string_1());
             }
             return false;
-        case SS_TEMP1:
+        case SS_CUSTOM_STRING_2:
             if (record->event.pressed) {
-                send_string("other string");
+                send_string(pq_custom_string_2());
             }
             return false;
     }
