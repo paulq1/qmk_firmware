@@ -1,6 +1,7 @@
 #include QMK_KEYBOARD_H
 #include "pq_color.h"
 #include "pq_strings.h"
+#include "rgb_matrix_map.h"
 
 bool encoder_volume(bool clockwise);
 bool encoder_back_forward(bool clockwise);
@@ -86,3 +87,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
     return true;
 }
+
+#ifdef RGB_MATRIX_ENABLE
+    bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+        for (uint8_t i=0; i<ARRAYSIZE(LED_ALL); i++) {
+            rgb_matrix_set_color(LED_ALL[i], PQ_WHITE);
+        }
+        return false;
+    }
+#endif
