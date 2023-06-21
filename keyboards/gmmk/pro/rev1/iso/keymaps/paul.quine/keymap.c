@@ -2,12 +2,18 @@
 #include "rgb_matrix_map.h"
 #include "pq_color.h"
 #include "pq_strings.h"
+#include "keymap_uk.h"
+#include "sendstring_uk.h"
 
 bool encoder_volume(bool clockwise);
 
 enum my_keycodes {
     SS_CUSTOM_STRING_1 = SAFE_RANGE,
-    SS_CUSTOM_STRING_2
+    SS_CUSTOM_STRING_2,
+    SS_CUSTOM_STRING_3,
+    SS_CUSTOM_STRING_4,
+    SS_CUSTOM_STRING_5,
+    SS_CUSTOM_STRING_6
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -27,7 +33,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_LCTL, KC_LGUI, KC_LALT,                            KC_SPC,                             KC_RALT, OSL(1),   KC_RCTL, KC_LEFT, KC_DOWN, KC_RGHT
     ),
     [1] = LAYOUT(
-        KC_TRNS, SS_CUSTOM_STRING_1, SS_CUSTOM_STRING_2, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,          KC_TRNS,
+        KC_TRNS, SS_CUSTOM_STRING_1, SS_CUSTOM_STRING_2, SS_CUSTOM_STRING_3, SS_CUSTOM_STRING_4, SS_CUSTOM_STRING_5, SS_CUSTOM_STRING_6, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,          KC_TRNS,
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, QK_BOOT,          KC_MNXT,
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                   KC_MPRV,
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,          KC_MPLY,
@@ -74,6 +80,26 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case SS_CUSTOM_STRING_2:
             if (record->event.pressed) {
                 send_string(pq_custom_string_2());
+            }
+            return false;
+        case SS_CUSTOM_STRING_3:
+            if (record->event.pressed) {
+                send_string(pq_custom_string_3());
+            }
+            return false;
+        case SS_CUSTOM_STRING_4:
+            if (record->event.pressed) {
+                send_string(pq_custom_string_4());
+            }
+            return false;
+        case SS_CUSTOM_STRING_5:
+            if (record->event.pressed) {
+                send_string(pq_custom_string_5());
+            }
+            return false;
+        case SS_CUSTOM_STRING_6:
+            if (record->event.pressed) {
+                send_string(pq_custom_string_6());
             }
             return false;
     }

@@ -2,6 +2,8 @@
 #include "pq_color.h"
 #include "pq_strings.h"
 #include "rgb_matrix_map.h"
+#include "keymap_uk.h"
+#include "sendstring_uk.h"
 
 bool encoder_volume(bool clockwise);
 bool encoder_back_forward(bool clockwise);
