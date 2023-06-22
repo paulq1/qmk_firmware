@@ -149,13 +149,13 @@ void pq_rgb(const uint8_t array[], size_t pq_size, uint8_t colour) {
 }
 
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+    rgb_matrix_set_color(LED_LALT, 0x00, 0x00, 0x00);
     if (!pq_is_rgb_enabled) {
         pq_rgb(LED_ALL, ARRAYSIZE(LED_ALL), PQ_BLACK);
         return false;
     }
 
     pq_rgb(LED_ALL, ARRAYSIZE(LED_ALL), PQ_WHITE);
-    rgb_matrix_set_color(LED_LALT, 0x00, 0x00, 0x00);
 
     switch (get_highest_layer(layer_state)) {
         case 0:
