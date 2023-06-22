@@ -154,7 +154,7 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
         return false;
     }
 
-    pq_rgb(LED_ALL, ARRAYSIZE(LED_ALL), 1);
+    pq_rgb(LED_ALL, ARRAYSIZE(LED_ALL), PQ_WHITE);
 
     switch (get_highest_layer(layer_state)) {
         case 0:
