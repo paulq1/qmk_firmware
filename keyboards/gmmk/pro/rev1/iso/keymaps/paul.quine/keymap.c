@@ -6,6 +6,9 @@
 #include "sendstring_uk.h"
 
 bool encoder_volume(bool clockwise);
+void pq_toggle_rgb(void);
+
+bool pq_is_rgb_enabled = true;
 
 enum my_keycodes {
     SS_CUSTOM_STRING_1 = SAFE_RANGE,
@@ -13,7 +16,8 @@ enum my_keycodes {
     SS_CUSTOM_STRING_3,
     SS_CUSTOM_STRING_4,
     SS_CUSTOM_STRING_5,
-    SS_CUSTOM_STRING_6
+    SS_CUSTOM_STRING_6,
+    LED_OFF
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -33,7 +37,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_LCTL, KC_LGUI, KC_LALT,                            KC_SPC,                             KC_RALT, OSL(1),   KC_RCTL, KC_LEFT, KC_DOWN, KC_RGHT
     ),
     [1] = LAYOUT(
-        KC_TRNS, SS_CUSTOM_STRING_1, SS_CUSTOM_STRING_2, SS_CUSTOM_STRING_3, SS_CUSTOM_STRING_4, SS_CUSTOM_STRING_5, SS_CUSTOM_STRING_6, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,          KC_TRNS,
+        KC_TRNS, SS_CUSTOM_STRING_1, SS_CUSTOM_STRING_2, SS_CUSTOM_STRING_3, SS_CUSTOM_STRING_4, SS_CUSTOM_STRING_5, SS_CUSTOM_STRING_6, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, LED_OFF,
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, QK_BOOT,          KC_MNXT,
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                   KC_MPRV,
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,          KC_MPLY,
@@ -60,14 +64,8 @@ bool encoder_volume(bool clockwise) {
     return true;
 }
 
-void suspend_power_down_kb(void) {
-    rgb_matrix_set_suspend_state(true);
-    suspend_power_down_user();
-}
-
-void suspend_wakeup_init_kb(void) {
-    rgb_matrix_set_suspend_state(false);
-    suspend_wakeup_init_user();
+void pq_toggle_rgb(void) {
+    pq_is_rgb_enabled = !pq_is_rgb_enabled;
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -102,50 +100,84 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 send_string(pq_custom_string_6());
             }
             return false;
+        case LED_OFF:
+            if (record->event.pressed) {
+                pq_toggle_rgb();
+            }
+            return false;
     }
     return true;
 }
 
 #ifdef RGB_MATRIX_ENABLE
-    bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max){
-        for (uint8_t i=0; i<ARRAYSIZE(LED_ALL); i++) {
-            rgb_matrix_set_color(LED_ALL[i], PQ_WHITE);
-        }
+void pq_rgb(const uint8_t array[], size_t pq_size, uint8_t colour) {
+    int red;
+    int green;
+    int blue;
 
-        switch(get_highest_layer(layer_state)){
-            case 0:
-                for (uint8_t i=0; i<ARRAYSIZE(LED_LIST_REDS); i++) {
-                    rgb_matrix_set_color(LED_LIST_REDS[i], PQ_RED);
-                }
-                for (uint8_t i=0; i<ARRAYSIZE(LED_LIST_YELLOW); i++) {
-                    rgb_matrix_set_color(LED_LIST_YELLOW[i], PQ_YELLOW);
-                }
-                for (uint8_t i=0; i<ARRAYSIZE(LED_LIST_BLUE); i++) {
-                    rgb_matrix_set_color(LED_LIST_BLUE[i], PQ_BLUE);
-                }
-                break;
-            case 1:
-                for (uint8_t i=0; i<ARRAYSIZE(LED_ALL); i++) {
-                    rgb_matrix_set_color(LED_ALL[i], PQ_BLACK);
-                }
-                for (uint8_t i=0; i<ARRAYSIZE(LED_SIDE_LEFT); i++) {
-                    rgb_matrix_set_color(LED_SIDE_LEFT[i], PQ_WHITE);
-                }
-                for (uint8_t i=0; i<ARRAYSIZE(LED_SIDE_RIGHT); i++) {
-                    rgb_matrix_set_color(LED_SIDE_RIGHT[i], PQ_WHITE);
-                }
-                for (uint8_t i=0; i<ARRAYSIZE(LED_LIST_FN_1_KEYS); i++) {
-                    rgb_matrix_set_color(LED_LIST_FN_1_KEYS[i], PQ_WHITE);
-                }
-                break;
-        }
+    switch (colour) {
+        case PQ_BLACK: // black
+            red   = 0x00;
+            green = 0x00;
+            blue  = 0x00;
+            break;
+        case PQ_WHITE: // white
+        default:
+            red   = 0xFF;
+            green = 0xFF;
+            blue  = 0xFF;
+            break;
+        case PQ_BLUE: // blue
+            red   = 0x00;
+            green = 0x80;
+            blue  = 0xFF;
+            break;
+        case PQ_RED: // red
+            red   = 0xFF;
+            green = 0x05;
+            blue  = 0x05;
+            break;
+        case PQ_YELLOW: // yellow
+            red   = 0xFF;
+            green = 0xEF;
+            blue  = 0x00;
+            break;
+    }
+    for (uint8_t i = 0; i < pq_size; i++) {
+        rgb_matrix_set_color(array[i], red, green, blue);
+    }
+}
 
-        if (host_keyboard_led_state().caps_lock) {
-            for (uint8_t i=0; i<ARRAYSIZE(LED_SIDE_LEFT); i++) {
-                rgb_matrix_set_color(LED_SIDE_LEFT[i], PQ_RED);
-            }
-            rgb_matrix_set_color(LED_CAPS, PQ_RED);
-        }
+bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+    if (!pq_is_rgb_enabled) {
+        pq_rgb(LED_ALL, ARRAYSIZE(LED_ALL), PQ_BLACK);
         return false;
     }
+
+    pq_rgb(LED_ALL, ARRAYSIZE(LED_ALL), 1);
+
+    switch (get_highest_layer(layer_state)) {
+        case 0:
+            pq_rgb(LED_LIST_REDS, ARRAYSIZE(LED_LIST_REDS), PQ_RED);
+            pq_rgb(LED_LIST_YELLOW, ARRAYSIZE(LED_LIST_YELLOW), PQ_YELLOW);
+            pq_rgb(LED_LIST_BLUE, ARRAYSIZE(LED_LIST_BLUE), PQ_BLUE);
+            break;
+        case 1:
+            pq_rgb(LED_ALL, ARRAYSIZE(LED_ALL), PQ_BLACK);
+            pq_rgb(LED_SIDE_LEFT, ARRAYSIZE(LED_SIDE_LEFT), PQ_WHITE);
+            pq_rgb(LED_SIDE_RIGHT, ARRAYSIZE(LED_SIDE_RIGHT), PQ_WHITE);
+            pq_rgb(LED_LAYER_1_WHITE, ARRAYSIZE(LED_LAYER_1_WHITE), PQ_WHITE);
+            pq_rgb(LED_LAYER_1_RED, ARRAYSIZE(LED_LAYER_1_RED), PQ_RED);
+            pq_rgb(LED_LAYER_1_BLUE, ARRAYSIZE(LED_LAYER_1_BLUE), PQ_BLUE);
+            pq_rgb(LED_LAYER_1_YELLOW, ARRAYSIZE(LED_LAYER_1_YELLOW), PQ_YELLOW);
+            break;
+    }
+
+    if (host_keyboard_led_state().caps_lock) {
+        pq_rgb(LED_SIDE_LEFT, ARRAYSIZE(LED_SIDE_LEFT), PQ_RED);
+        rgb_matrix_set_color(LED_CAPS, 0xFF, 0x05, 0x05);
+    }
+
+    return false;
+}
 #endif

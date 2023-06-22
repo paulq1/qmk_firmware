@@ -1,6 +1,6 @@
 
-#define PQ_BLACK       0x00, 0x00, 0x00
-#define PQ_WHITE       0xFF, 0xFF, 0xFF
-#define PQ_BLUE        0x00, 0x80, 0xFF
-#define PQ_RED         0xFF, 0x05, 0x05
-#define PQ_YELLOW      0xFF, 0xEF, 0x00
+#define PQ_BLACK       0
+#define PQ_WHITE       1
+#define PQ_BLUE        2
+#define PQ_RED         3
+#define PQ_YELLOW      4
