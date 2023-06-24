@@ -8,23 +8,23 @@
 bool encoder_volume(bool clockwise);
 bool encoder_back_forward(bool clockwise);
 bool encoder_up_down(bool clockwise);
+void pq_toggle_rgb(void);
 
-enum my_keycodes {
-    SS_CUSTOM_STRING_1 = SAFE_RANGE,
-    SS_CUSTOM_STRING_2
-};
+bool pq_is_rgb_enabled = true;
+
+enum my_keycodes { SS_CUSTOM_STRING_1 = SAFE_RANGE, SS_CUSTOM_STRING_2, SS_CUSTOM_STRING_3, LED_OFF };
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT_top(
             KC_NO,      KC_MUTE,     KC_NO,
-        LCTL(LALT(KC_DEL)),    SS_CUSTOM_STRING_1,    SS_CUSTOM_STRING_2,    KC_NO,    KC_NO,
+        LCTL(LALT(KC_DEL)),    SS_CUSTOM_STRING_1,    SS_CUSTOM_STRING_2,    SS_CUSTOM_STRING_3,    KC_NO,
         KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,
-        MO(1),    KC_NO,    KC_NO,    KC_NO,    KC_NO
+        OSL(1),    KC_NO,    KC_NO,    KC_NO,    KC_NO
     ),
 
     [1] = LAYOUT_top(
-            KC_NO,      KC_NO,     KC_NO,
+            LED_OFF,      KC_NO,     KC_NO,
         QK_BOOT,   KC_F13,    KC_F14,    KC_F15,    KC_F16,
         KC_F17,    KC_F18,    KC_F19,    KC_F20,    KC_F21,
         KC_TRNS,  KC_F22,    KC_F23,    KC_F24,    KC_NO
@@ -34,27 +34,27 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 bool encoder_volume(bool clockwise) {
     if (clockwise) {
-        tap_code(KC_VOLU);
-    } else {
         tap_code(KC_VOLD);
+    } else {
+        tap_code(KC_VOLU);
     }
     return true;
 }
 
 bool encoder_back_forward(bool clockwise) {
     if (clockwise) {
-        tap_code(KC_RGHT);
-    } else {
         tap_code(KC_LEFT);
+    } else {
+        tap_code(KC_RGHT);
     }
     return true;
 }
 
 bool encoder_up_down(bool clockwise) {
     if (clockwise) {
-        tap_code(KC_PGDN);
-    } else {
         tap_code(KC_PGUP);
+    } else {
+        tap_code(KC_PGDN);
     }
     return true;
 }
@@ -63,7 +63,7 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
     switch (index) {
         case 0:
             encoder_back_forward(clockwise);
-            break ;
+            break;
         case 1:
             encoder_volume(clockwise);
             break;
@@ -72,6 +72,10 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
             break;
     }
     return false;
+}
+
+void pq_toggle_rgb(void) {
+    pq_is_rgb_enabled = !pq_is_rgb_enabled;
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -86,15 +90,83 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 send_string(pq_custom_string_2());
             }
             return false;
+        case SS_CUSTOM_STRING_3:
+            if (record->event.pressed) {
+                send_string(pq_custom_string_3());
+            }
+            return false;
+        case LED_OFF:
+            if (record->event.pressed) {
+                pq_toggle_rgb();
+            }
+            return false;
     }
     return true;
 }
 
 #ifdef RGB_MATRIX_ENABLE
-    bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
-        for (uint8_t i=0; i<ARRAYSIZE(LED_ALL); i++) {
-            rgb_matrix_set_color(LED_ALL[i], PQ_WHITE);
-        }
+void pq_rgb(const uint8_t array[], size_t pq_size, uint8_t colour) {
+    int red;
+    int green;
+    int blue;
+
+    switch (colour) {
+        case PQ_BLACK: // black
+            red   = 0x00;
+            green = 0x00;
+            blue  = 0x00;
+            break;
+        case PQ_WHITE: // white
+        default:
+            red   = 0xFF;
+            green = 0xFF;
+            blue  = 0xFF;
+            break;
+        case PQ_BLUE: // blue
+            red   = 0x00;
+            green = 0x80;
+            blue  = 0xFF;
+            break;
+        case PQ_RED: // red
+            red   = 0xFF;
+            green = 0x05;
+            blue  = 0x05;
+            break;
+        case PQ_YELLOW: // yellow
+            red   = 0xFF;
+            green = 0xEF;
+            blue  = 0x00;
+            break;
+    }
+    for (uint8_t i = 0; i < pq_size; i++) {
+        rgb_matrix_set_color(array[i], red, green, blue);
+    }
+}
+bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+    if (!pq_is_rgb_enabled) {
+        pq_rgb(LED_ALL, ARRAYSIZE(LED_ALL), PQ_BLACK);
+        pq_rgb(LED_LIST_BLACK, ARRAYSIZE(LED_LIST_BLACK), PQ_BLACK);
         return false;
     }
+
+    pq_rgb(LED_ALL, ARRAYSIZE(LED_ALL), PQ_WHITE);
+    pq_rgb(LED_LIST_BLACK, ARRAYSIZE(LED_LIST_BLACK), PQ_BLACK);
+
+    switch(get_highest_layer(layer_state)){
+        case 0:
+            pq_rgb(LED_LIST_REDS, ARRAYSIZE(LED_LIST_REDS), PQ_RED);
+            pq_rgb(LED_LIST_YELLOW, ARRAYSIZE(LED_LIST_YELLOW), PQ_YELLOW);
+            pq_rgb(LED_LIST_BLUE, ARRAYSIZE(LED_LIST_BLUE), PQ_BLUE);
+            break;
+        case 1:
+            pq_rgb(LED_ALL, ARRAYSIZE(LED_ALL), PQ_BLACK);
+            pq_rgb(LED_LAYER_1_WHITE, ARRAYSIZE(LED_LAYER_1_WHITE), PQ_WHITE);
+            pq_rgb(LED_LAYER_1_RED, ARRAYSIZE(LED_LAYER_1_RED), PQ_RED);
+            pq_rgb(LED_LAYER_1_BLUE, ARRAYSIZE(LED_LAYER_1_BLUE), PQ_BLUE);
+            pq_rgb(LED_LAYER_1_YELLOW, ARRAYSIZE(LED_LAYER_1_YELLOW), PQ_YELLOW);
+            break;
+    }
+
+    return false;
+}
 #endif
