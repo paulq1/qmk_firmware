@@ -8,7 +8,7 @@
 bool encoder_volume(bool clockwise);
 void pq_toggle_rgb(void);
 
-bool pq_is_rgb_enabled = true;
+bool pq_is_rgb_enabled = false;
 
 enum my_keycodes {
     SS_CUSTOM_STRING_1 = SAFE_RANGE,
@@ -152,6 +152,10 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     rgb_matrix_set_color(LED_LALT, 0x00, 0x00, 0x00);
     if (!pq_is_rgb_enabled) {
         pq_rgb(LED_ALL, ARRAYSIZE(LED_ALL), PQ_BLACK);
+        if (host_keyboard_led_state().caps_lock) {
+            pq_rgb(LED_SIDE_LEFT, ARRAYSIZE(LED_SIDE_LEFT), PQ_RED);
+            rgb_matrix_set_color(LED_CAPS, 0xFF, 0x05, 0x05);
+        }
         return false;
     }
 

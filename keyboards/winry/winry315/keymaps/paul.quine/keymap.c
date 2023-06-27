@@ -5,12 +5,12 @@
 #include "keymap_uk.h"
 #include "sendstring_uk.h"
 
-bool encoder_volume(bool clockwise);
+bool encoder_zoom(bool clockwise);
 bool encoder_back_forward(bool clockwise);
 bool encoder_up_down(bool clockwise);
 void pq_toggle_rgb(void);
 
-bool pq_is_rgb_enabled = true;
+bool pq_is_rgb_enabled = false;
 
 enum my_keycodes { SS_CUSTOM_STRING_1 = SAFE_RANGE, SS_CUSTOM_STRING_2, SS_CUSTOM_STRING_3, LED_OFF };
 
@@ -32,11 +32,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 // clang-format on
 
-bool encoder_volume(bool clockwise) {
+bool encoder_zoom(bool clockwise) {
     if (clockwise) {
-        tap_code(KC_VOLD);
+        tap_code16(LCTL(KC_MINS));
     } else {
-        tap_code(KC_VOLU);
+        tap_code16(LCTL(KC_EQUAL));
     }
     return true;
 }
@@ -65,7 +65,7 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
             encoder_back_forward(clockwise);
             break;
         case 1:
-            encoder_volume(clockwise);
+            encoder_zoom(clockwise);
             break;
         case 2:
             encoder_up_down(clockwise);
@@ -143,14 +143,14 @@ void pq_rgb(const uint8_t array[], size_t pq_size, uint8_t colour) {
     }
 }
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+    pq_rgb(LED_LIST_BLACK, ARRAYSIZE(LED_LIST_BLACK), PQ_BLACK);
+
     if (!pq_is_rgb_enabled) {
         pq_rgb(LED_ALL, ARRAYSIZE(LED_ALL), PQ_BLACK);
-        pq_rgb(LED_LIST_BLACK, ARRAYSIZE(LED_LIST_BLACK), PQ_BLACK);
         return false;
     }
 
     pq_rgb(LED_ALL, ARRAYSIZE(LED_ALL), PQ_WHITE);
-    pq_rgb(LED_LIST_BLACK, ARRAYSIZE(LED_LIST_BLACK), PQ_BLACK);
 
     switch(get_highest_layer(layer_state)){
         case 0:
