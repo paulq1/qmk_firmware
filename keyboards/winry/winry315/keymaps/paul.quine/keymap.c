@@ -12,15 +12,21 @@ void pq_toggle_rgb(void);
 
 bool pq_is_rgb_enabled = false;
 
-enum my_keycodes { SS_CUSTOM_STRING_1 = SAFE_RANGE, SS_CUSTOM_STRING_2, SS_CUSTOM_STRING_3, LED_OFF };
+enum my_keycodes {
+    SS_CUSTOM_STRING_1 = SAFE_RANGE,
+    SS_CUSTOM_STRING_2,
+    SS_CUSTOM_STRING_3,
+    SS_CUSTOM_SAFE_STING_1,
+    LED_OFF
+};
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT_top(
             KC_NO,      KC_MUTE,     KC_NO,
         LCTL(LALT(KC_DEL)),    SS_CUSTOM_STRING_1,    SS_CUSTOM_STRING_2,    SS_CUSTOM_STRING_3,    KC_NO,
-        KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,
-        OSL(1),    KC_NO,    KC_NO,    KC_NO,    KC_NO
+        LCTL(KC_K),    LCTL(LSFT(KC_K)),    KC_NO,    KC_NO,    KC_NO,
+        OSL(1),    SS_CUSTOM_SAFE_STING_1,    KC_NO,    KC_NO,    KC_NO
     ),
 
     [1] = LAYOUT_top(
@@ -98,6 +104,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case LED_OFF:
             if (record->event.pressed) {
                 pq_toggle_rgb();
+            }
+            return false;
+        case SS_CUSTOM_SAFE_STING_1:
+            if (record->event.pressed) {
+                send_string(pq_custom_safe_string_1());
             }
             return false;
     }
