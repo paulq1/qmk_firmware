@@ -25,7 +25,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT_top(
             KC_NO,      KC_MUTE,     KC_NO,
         LCTL(LALT(KC_DEL)),    SS_CUSTOM_STRING_1,    SS_CUSTOM_STRING_2,    SS_CUSTOM_STRING_3,    KC_NO,
-        LCTL(KC_K),    LCTL(LSFT(KC_K)),    KC_NO,    KC_NO,    KC_NO,
+        LSFT(KC_F6),    LCTL(LALT(KC_M)),    KC_NO,    KC_NO,    KC_NO,
         OSL(1),    SS_CUSTOM_SAFE_STING_1,    KC_NO,    KC_NO,    KC_NO
     ),
 
