@@ -3,5 +3,9 @@ const char* pq_custom_safe_string_1(void){
 }
 
 const char* pq_custom_safe_string_2(void){
-    return "./vendor/bin/phpunit tests";
+    return "yarn phpstan:analyse\n";
+}
+
+const char* pq_custom_safe_string_3(void){
+    return "php artisan results-api:SendHardcopyHealthReportToMba ";
 }
