@@ -8,3 +8,4 @@ extern const char* pq_custom_string_4(void);
 
 extern const char* pq_custom_safe_string_1(void);
 extern const char* pq_custom_safe_string_2(void);
+extern const char* pq_custom_safe_string_3(void);
