@@ -17,6 +17,7 @@ enum my_keycodes {
     SS_CUSTOM_STRING_2,
     SS_CUSTOM_STRING_3,
     SS_CUSTOM_STRING_4,
+    SS_CUSTOM_STRING_5,
     SS_CUSTOM_SAFE_STING_1,
     SS_CUSTOM_SAFE_STING_2,
     SS_CUSTOM_SAFE_STING_3,
@@ -28,7 +29,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT_top(
             KC_NO,      KC_MUTE,     KC_NO,
         LCTL(LALT(KC_DEL)),    SS_CUSTOM_STRING_1,    SS_CUSTOM_STRING_2,    SS_CUSTOM_STRING_3,    SS_CUSTOM_STRING_4,
-        KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,
+        KC_NO,    KC_NO,    SS_CUSTOM_STRING_5,    KC_NO,    KC_NO,
         OSL(1),    SS_CUSTOM_SAFE_STING_1,    SS_CUSTOM_SAFE_STING_2,    KC_NO,    SS_CUSTOM_SAFE_STING_3
     ),
 
@@ -107,6 +108,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case SS_CUSTOM_STRING_4:
             if (record->event.pressed) {
                 send_string(pq_custom_string_4());
+            }
+            return false;
+        case SS_CUSTOM_STRING_5:
+            if (record->event.pressed) {
+                send_string(pq_custom_string_5());
             }
             return false;
         case LED_OFF:
