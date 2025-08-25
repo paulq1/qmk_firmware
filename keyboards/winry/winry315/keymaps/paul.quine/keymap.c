@@ -27,7 +27,7 @@ enum my_keycodes {
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT_top(
-            KC_NO,      KC_MUTE,     KC_NO,
+            KC_NO,      LCTL(LSFT(KC_M)),     LCTL(LSFT(KC_O)),
         LCTL(LALT(KC_DEL)),    SS_CUSTOM_STRING_1,    SS_CUSTOM_STRING_2,    SS_CUSTOM_STRING_3,    SS_CUSTOM_STRING_4,
         KC_NO,    KC_NO,    SS_CUSTOM_STRING_5,    KC_NO,    KC_NO,
         OSL(1),    SS_CUSTOM_SAFE_STING_1,    SS_CUSTOM_SAFE_STING_2,    KC_NO,    SS_CUSTOM_SAFE_STING_3
