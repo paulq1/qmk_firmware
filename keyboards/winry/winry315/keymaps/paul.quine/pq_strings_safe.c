@@ -9,3 +9,7 @@ const char* pq_custom_safe_string_2(void){
 const char* pq_custom_safe_string_3(void){
     return "php artisan results-api:SendHardcopyHealthReportToMba ";
 }
+
+const char* pq_custom_safe_string_4(void){
+    return "yarn phpunit\n";
+}
