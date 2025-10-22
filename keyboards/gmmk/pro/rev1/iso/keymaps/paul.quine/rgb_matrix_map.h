@@ -134,5 +134,6 @@ const uint8_t LED_LAYER_1_WHITE[] = {LED_BSPC, LED_PGUP, LED_PGDN, LED_HOME, LED
 const uint8_t LED_LAYER_1_RED[] = {LED_F1, LED_F2};
 const uint8_t LED_LAYER_1_BLUE[] = {LED_F3, LED_F4};
 const uint8_t LED_LAYER_1_YELLOW[] = {LED_F5, LED_F6};
+const uint8_t LED_LAYER_1_PURPLE[] = {LED_F12};
 
 #endif

@@ -17,6 +17,7 @@ enum my_keycodes {
     SS_CUSTOM_STRING_4,
     SS_CUSTOM_STRING_5,
     SS_CUSTOM_STRING_6,
+    SS_CUSTOM_STRING_7,
     LED_OFF
 };
 
@@ -37,7 +38,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_LCTL, KC_LGUI, KC_LALT,                            KC_SPC,                             KC_RALT, OSL(1),   KC_RCTL, KC_LEFT, KC_DOWN, KC_RGHT
     ),
     [1] = LAYOUT(
-        KC_TRNS, SS_CUSTOM_STRING_1, SS_CUSTOM_STRING_2, SS_CUSTOM_STRING_3, SS_CUSTOM_STRING_4, SS_CUSTOM_STRING_5, SS_CUSTOM_STRING_6, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, LED_OFF,
+        KC_TRNS, SS_CUSTOM_STRING_1, SS_CUSTOM_STRING_2, SS_CUSTOM_STRING_3, SS_CUSTOM_STRING_4, SS_CUSTOM_STRING_5, SS_CUSTOM_STRING_6, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, SS_CUSTOM_STRING_7, KC_TRNS, LED_OFF,
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, QK_BOOT,          KC_MNXT,
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                   KC_MPRV,
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,          KC_MPLY,
@@ -100,6 +101,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 send_string(pq_custom_string_6());
             }
             return false;
+        case SS_CUSTOM_STRING_7:
+            if (record->event.pressed) {
+                send_string(pq_custom_string_7());
+            }
+            return false;
         case LED_OFF:
             if (record->event.pressed) {
                 pq_toggle_rgb();
@@ -142,6 +148,11 @@ void pq_rgb(const uint8_t array[], size_t pq_size, uint8_t colour) {
             green = 0xEF;
             blue  = 0x00;
             break;
+        case PQ_PURPLE: //purple
+            red   = 0xFF;
+            green = 0x00;
+            blue  = 0xFF;
+            break;
     }
     for (uint8_t i = 0; i < pq_size; i++) {
         rgb_matrix_set_color(array[i], red, green, blue);
@@ -175,6 +186,7 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             pq_rgb(LED_LAYER_1_RED, ARRAYSIZE(LED_LAYER_1_RED), PQ_RED);
             pq_rgb(LED_LAYER_1_BLUE, ARRAYSIZE(LED_LAYER_1_BLUE), PQ_BLUE);
             pq_rgb(LED_LAYER_1_YELLOW, ARRAYSIZE(LED_LAYER_1_YELLOW), PQ_YELLOW);
+            pq_rgb(LED_LAYER_1_PURPLE, ARRAYSIZE(LED_LAYER_1_PURPLE), PQ_PURPLE);
             break;
     }
 

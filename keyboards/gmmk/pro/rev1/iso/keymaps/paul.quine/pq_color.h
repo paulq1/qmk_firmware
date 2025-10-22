@@ -4,3 +4,4 @@
 #define PQ_BLUE        2
 #define PQ_RED         3
 #define PQ_YELLOW      4
+#define PQ_PURPLE      5
